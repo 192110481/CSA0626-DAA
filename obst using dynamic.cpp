@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <limits.h>
+float sum(float freq[], int i, int j);
+float optimalBST(float keys[], float freq[], int n) {
+    float cost[n][n];
+    for (int i = 0; i < n; i++) {
+        cost[i][i] = freq[i];
+    }
+    for (int L = 2; L <= n; L++) {
+        for (int i = 0; i <= n - L; i++) {
+            int j = i + L - 1;
+            cost[i][j] = INT_MAX;
+            for (int r = i; r <= j; r++) {
+                float c = ((r > i) ? cost[i][r-1] : 0) + ((r < j) ? cost[r+1][j] : 0) + sum(freq, i, j);
+                if (c < cost[i][j]) {
+                    cost[i][j] = c;
+                }
+            }
+        }
+    }
+    return cost[0][n-1];
+}
+float sum(float freq[], int i, int j) {
+    float s = 0;
+    for (int k = i; k <= j; k++) {
+        s += freq[k];
+    }
+    return s;
+}
+int main() {
+    int n;
+    printf("Enter the number of keys: ");
+    scanf("%d", &n);
+    float keys[n], freq[n];
+    printf("Enter the keys:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%f", &keys[i]);
+    }
+    printf("Enter the frequencies:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%f", &freq[i]);
+    }
+    printf("Cost of the optimal BST is %f\n", optimalBST(keys, freq, n));
+    return 0;
+}
